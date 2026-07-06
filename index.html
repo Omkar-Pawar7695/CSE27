@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSC Daily Syllabus Tracker</title>
+    <style>
+        :root {
+            --bg-canvas: #f7fafc;
+            --card-surface: #ffffff;
+            --ink-primary: #1a202c;
+            --ink-muted: #718096;
+            --gs-accent: #4a5568;
+            --econ-accent: #2b6cb0;
+            --border-line: #e2e8f0;
+            --success-green: #38a169;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-canvas);
+            color: var(--ink-primary);
+            margin: 0;
+            padding: 24px;
+            line-height: 1.6;
+        }
+
+        .wrapper {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-size: 1.85rem;
+            margin: 0 0 6px 0;
+            color: var(--ink-primary);
+        }
+
+        .phase-header {
+            background-color: #2d3748;
+            color: #ffffff;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-top: 36px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .day-block {
+            background: var(--card-surface);
+            border: 1px solid var(--border-line);
+            border-radius: 8px;
+            padding: 18px;
+            margin-top: 14px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .day-meta {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--ink-primary);
+            border-bottom: 1px dashed var(--border-line);
+            padding-bottom: 8px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .tracking-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+
+        .econ-nested-box {
+            margin-top: 10px;
+            padding: 10px 10px 10px 14px;
+            background-color: #f8fafc;
+            border-left: 4px solid var(--econ-accent);
+            border-top: 1px solid #edf2f7;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .text-content {
+            flex: 1;
+            padding-right: 20px;
+            font-size: 0.95rem;
+        }
+
+        .gs-text {
+            color: var(--gs-accent);
+        }
+
+        .econ-text {
+            color: var(--econ-accent);
+        }
+
+        /* Checkbox Customization */
+        .check-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            margin-top: 2px;
+        }
+
+        .check-wrapper input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .custom-box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 22px;
+            width: 22px;
+            background-color: #ffffff;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .check-wrapper input:checked + .custom-box {
+            background-color: var(--success-green);
+            border-color: var(--success-green);
+        }
+
+        .custom-box:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 7px;
+            top: 3px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2.5px 2.5px 0;
+            transform: rotate(45deg);
+        }
+
+        .check-wrapper input:checked + .custom-box:after {
+            display: block;
+        }
+
+        /* Bottom Fixed Metric Section */
+        .analytics-panel {
+            margin-top: 48px;
+            background: var(--card-surface);
+            border: 2px solid var(--border-line);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .pie-viewport {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .metric-string {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--ink-primary);
+            margin-top: 12px;
+        }
+
+        .legend-row {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 16px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .legend-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <h1>UPSC Preparation Master Schedule</h1>
+        <p style="color: var(--ink-muted); margin: 4px 0 0 0;">Dual-Track Syllabus System: July 6, 2026 – January 1, 2027</p>
+    </header>
+
+    <!-- Interactive Schedule Field -->
+    <main id="schedule-render-engine"></main>
+
+    <!-- Dynamic Graphic Element - Stationed at Bottom -->
+    <section class="analytics-panel">
+        <h2>Syllabus Completion Index</h2>
+        <div class="pie-viewport">
+            <svg width="160" height="160" viewBox="0 0 32 32">
+                <!-- Base Remaining Track Layer -->
+                <circle r="16" cx="16" cy="16" fill="#e2e8f0" />
+                <!-- Dynamic Finished Percent Sector -->
+                <circle id="pie-slice" r="8" cx="16" cy="16" fill="transparent" 
+                        stroke="var(--success-green)" stroke-width="16" 
+                        stroke-dasharray="0 50.26" transform="rotate(-90 16 16)" />
+            </svg>
+        </div>
+        <div class="metric-string" id="counter-readout">0 / 0 Target Blocks Cleared (0%)</div>
+        
+        <div class="legend-row">
+            <div class="legend-pill">
+                <div class="color-dot" style="background-color: var(--success-green);"></div>
+                <span>Completed Topics</span>
+            </div>
+            <div class="legend-pill">
+                <div class="color-dot" style="background-color: #e2e8f0;"></div>
+                <span>Pending Syllabus</span>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    // Exact Syllabus Core Mappings
+    const gs4Syllabus = [
+        "Ethics & Human Interface: Essence, Determinants, Consequences of Ethics",
+        "Human Values: Lessons from Lives of Great Leaders, Reformers, Administrators",
+        "Attitude: Content, Structure, Function, Influence on Behavior & Thought",
+        "Aptitude & Foundational Values for Civil Services: Integrity, Impartiality, Objectivity",
+        "Emotional Intelligence: Concepts, Utilities, Application in Governance",
+        "Contributions of Moral Thinkers and Philosophers from India and the World",
+        "Public Service Values & Ethics in Public Administration: Status and Problems",
+        "Probity in Governance: Concept of Public Service, Information Sharing, Right to Info",
+        "Syllabus Framework Case Studies on Governance, Administrative Dilemmas & Ethics"
+    ];
+
+    const gs3Syllabus = [
+        "Indian Economy: Issues Relating to Planning, Mobilization of Resources, Growth",
+        "Inclusive Growth & Associated Challenges; Government Budgeting Systems",
+        "Major Crops & Cropping Patterns; Irrigation Systems & Storage Options",
+        "Farm Subsidies, Minimum Support Prices (MSP); Public Distribution System (PDS) Issues",
+        "Food Processing & Allied Industries in India: Scope, Significance, Upstream/Downstream",
+        "Land Reforms in India; Effects of Liberalization, Industrial Policy Alterations",
+        "Infrastructure Systems: Energy, Ports, Roads, Airports, Railways Development",
+        "Investment Models; Science & Tech Developments, Everyday Applications",
+        "Achievements of Indians in Science & Tech; Indigenization of Technology Systems",
+        "Awareness in IT, Space, Computers, Robotics, Nanotechnology, Biotech Ecosystems",
+        "Environmental Conservation, Pollution, Degradation; Environmental Impact Assessment",
+        "Disaster Management Frameworks; Security Challenges & Extremism Linkages",
+        "Internal Security via Communications Networks, Media, Cyber Security Baselines"
+    ];
+
+    const gs2Syllabus = [
+        "Indian Constitution: Historical Underpinnings, Evolution, Salient Features, Amendments",
+        "Union and State Functions, Responsibilities, Challenges in Federal Structure",
+        "Separation of Powers between Organs, Dispute Redressal Mechanisms & Institutions",
+        "Comparison of Indian Constitutional Scheme with Other Major Nations",
+        "Parliament & State Legislatures: Structure, Functioning, Conduct of Business",
+        "Executive & Judiciary Structure, Organization, Functional Norms",
+        "Salient Features of the Representation of People's Act",
+        "Appointment to Constitutional Posts, Powers, Functions of Constitutional Bodies",
+        "Statutory, Regulatory and Quasi-judicial Bodies; Executive Policies & Interventions",
+        "Welfare Schemes for Vulnerable Sections; Performance and Mechanisms of Frameworks",
+        "Health, Education, Human Resources Development Governance Systems",
+        "Issues Relating to Poverty and Hunger; Governance Transparency & Accountability",
+        "Role of Civil Services in a Democracy; Bilateral, Regional, Global Groupings"
+    ];
+
+    const gs1Syllabus = [
+        "Indian Culture: Art Forms, Literature, Architecture from Ancient to Modern",
+        "Modern Indian History from Middle of 18th Century to Present: Significant Events",
+        "The Freedom Struggle: Stages, Contributors, Contributions across Regions",
+        "Post-Independence Consolidation and Reorganization within the Country",
+        "World History: 18th Century Events, Industrial Revolution, Colonization, Redrawn Borders",
+        "Salient Features of Indian Society; Diversity Profile of India",
+        "Role of Women and Women's Organizations; Poverty, Population Development Stressors",
+        "Effects of Globalization on Indian Social Framework; Secularism, Communalism",
+        "Salient Features of World's Physical Geography Profiles",
+        "Distribution of Key Natural Resources Across Global Zones (Water, Soils, Forests)"
+    ];
+
+    const economicsOptionalSyllabus = [
+        "Advanced Microeconomics: Consumer Behaviour, Production & Cost, Market Structures",
+        "Advanced Macroeconomics: Income & Employment Determination, Interest Rate Frameworks",
+        "Money, Banking and Finance: Central Banking System, Financial Markets, Financial Inclusion",
+        "International Economics: Trade Theories, Tariffs, Balance of Payments Adjustments",
+        "Growth and Development: Growth Models (Lewis, Rostow, Harrod-Domar, Solow), Sustainability",
+        "Indian Economy (Pre-Independence): Infrastructure Decay, Land Systems, Drain of Wealth",
+        "Indian Economy (Post-Independence Pre-Liberalization): Five Year Plans, Agrarian Reforms",
+        "Post-Liberalization Structural Changes: New Economic Policy 1991, Banking Reforms, GST Impact"
+    ];
+
+    const startDate = new Date(2026, 6, 6); // July 6, 2026
+    const endDate = new Date(2027, 0, 1);   // January 1, 2027
+    const renderAnchor = document.getElementById('schedule-render-engine');
+
+    function buildTrackerDashboard() {
+        let runnerDate = new Date(startDate);
+        let activeHeader = "";
+        let chronologicalIndex = 1;
+
+        while (runnerDate <= endDate) {
+            const displayDateStr = runnerDate.toLocaleDateString('en-US', { 
+                weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' 
+            });
+            
+            let phaseHeading = "Revision & Evaluation Engine";
+            let activeGSBlock = ["Comprehensive GS Core Revision, Cross-linking Concepts, Contextual Practice & Mocks"];
+            
+            // Set dynamic date ranges matching your strict order
+            const currentMs = runnerDate.getTime();
+            if (currentMs <= new Date(2026, 7, 5).getTime()) {
+                phaseHeading = "General Studies 4: Ethics, Integrity, & Aptitude Timeline";
+                activeGSBlock = gs4Syllabus;
+            } else if (currentMs <= new Date(2026, 8, 5).getTime()) {
+                phaseHeading = "General Studies 3: Economy, Environment, Security, & Technology Timeline";
+                activeGSBlock = gs3Syllabus;
+            } else if (currentMs <= new Date(2026, 9, 5).getTime()) {
+                phaseHeading = "General Studies 2: Polity, Constitution, & International Relations Timeline";
+                activeGSBlock = gs2Syllabus;
+            } else if (currentMs <= new Date(2026, 10, 5).getTime()) {
+                phaseHeading = "General Studies 1: History, Heritage, Society, & Geography Timeline";
+                activeGSBlock = gs1Syllabus;
+            }
+
+            // Append visual section breaks cleanly
+            if (activeHeader !== phaseHeading) {
+                activeHeader = phaseHeading;
+                const phaseCard = document.createElement('div');
+                phaseCard.className = 'phase-header';
+                phaseCard.innerText = activeHeader;
+                renderAnchor.appendChild(phaseCard);
+            }
+
+            // Loop smoothly through individual array items
+            const currentGSTopic = activeGSBlock[(chronologicalIndex - 1) % activeGSBlock.length];
+            const currentEconTopic = economicsOptionalSyllabus[(chronologicalIndex - 1) % economicsOptionalSyllabus.length];
+
+            const blockMarkup = document.createElement('div');
+            blockMarkup.className = 'day-block';
+            
+            const keyGS = `gs_item_${chronologicalIndex}`;
+            const keyEcon = `econ_item_${chronologicalIndex}`;
+
+            blockMarkup.innerHTML = `
+                <div class="day-meta">
+                    <span>Day ${chronologicalIndex}</span>
+                    <span style="font-size: 0.88rem; color: var(--ink-muted); font-weight: 500;">${displayDateStr}</span>
+                </div>
+                <div class="tracking-item">
+                    <div class="text-content gs-text"><strong>GS Track:</strong> ${currentGSTopic}</div>
+                    <label class="check-wrapper">
+                        <input type="checkbox" id="${keyGS}" class="system-checkbox" onchange="processProgressMetrics()">
+                        <span class="custom-box"></span>
+                    </label>
+                </div>
+                <div class="tracking-item econ-nested-box">
+                    <div class="text-content econ-text"><strong>Economics Optional Track:</strong> ${currentEconTopic}</div>
+                    <label class="check-wrapper">
+                        <input type="checkbox" id="${keyEcon}" class="system-checkbox" onchange="processProgressMetrics()">
+                        <span class="custom-box"></span>
+                    </label>
+                </div>
+            `;
+
+            renderAnchor.appendChild(blockMarkup);
+            runnerDate.setDate(runnerDate.getDate() + 1);
+            chronologicalIndex++;
+        }
+
+        readStoredSettings();
+        processProgressMetrics();
+    }
+
+    function processProgressMetrics() {
+        const checkableNodes = document.querySelectorAll('.system-checkbox');
+        let selectedUnits = 0;
+        const memoryMap = {};
+
+        checkableNodes.forEach(node => {
+            if (node.checked) {
+                selectedUnits++;
+            }
+            memoryMap[node.id] = node.checked;
+        });
+
+        // Store entire progress data structure efficiently in a single stringified key
+        localStorage.setItem('upsc_tracker_payload', JSON.stringify(memoryMap));
+
+        const grandTotal = checkableNodes.length;
+        const netPercentage = grandTotal > 0 ? Math.round((selectedUnits / grandTotal) * 100) : 0;
+
+        // Render numerical strings
+        document.getElementById('counter-readout').innerText = `${selectedUnits} / ${grandTotal} Target Blocks Cleared (${netPercentage}%)`;
+
+        // Mathematical conversion for perfect SVG Pie visual tracking (Circumference of radius 8 is ~50.26)
+        const targetSlice = document.getElementById('pie-slice');
+        if (targetSlice) {
+            const visualValue = (netPercentage / 100) * 50.26;
+            targetSlice.setAttribute('stroke-dasharray', `${visualValue} 50.26`);
+        }
+    }
+
+    function readStoredSettings() {
+        try {
+            const packedPayload = localStorage.getItem('upsc_tracker_payload');
+            if (packedPayload) {
+                const standardMap = JSON.parse(packedPayload);
+                const checkableNodes = document.querySelectorAll('.system-checkbox');
+                checkableNodes.forEach(node => {
+                    if (standardMap[node.id] !== undefined) {
+                        node.checked = standardMap[node.id];
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Local storage allocation read fault:", error);
+        }
+    }
+
+    // Trigger operational loop on interface delivery
+    window.addEventListener('DOMContentLoaded', buildTrackerDashboard);
+</script>
+
+</body>
+</html>
